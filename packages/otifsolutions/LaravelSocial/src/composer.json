@@ -1,0 +1,30 @@
+{
+  "name": "OTIFSolutions/LaravelSocial",
+  "description": "An ACL Menu Package that includes User Roles, Permissions, Db based Menu Items, rights and permission based menu items",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "OTIF Solutions",
+      "email": "contact@otif-solutions.com"
+    }
+  ],
+  "require": {
+    "facebook/graph-sdk": "^5.7",
+    "j7mbo/twitter-api-php": "^1.0",
+    "mgp25/instagram-php": "^6.0",
+    "dirkgroenen/pinterest-api-php": "^0.2.12"
+  },
+  "autoload": {
+    "psr-4": {
+      "OTIFSolutions\\LaravelSocial\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "OTIFSolutions\\LaravelSocial\\LaravelSocialServiceProvider"
+      ]
+    }
+  }
+}
