@@ -23,7 +23,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "otifsolutions\\LaravelSocial\\LaravelSocialServiceProvider"
+        "OTIFSolutions\\LaravelSocial\\LaravelSocialServiceProvider"
       ]
     }
   }
