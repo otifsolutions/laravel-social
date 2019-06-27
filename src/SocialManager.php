@@ -111,7 +111,6 @@ class SocialManager
 
                 $this->consumerKey = $config['consumer_key'];
                 $this->consumerSecret = $config['consumer_secret'];
-
             }
 
             function getAllPosts($twitter) {

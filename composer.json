@@ -1,6 +1,6 @@
 {
-  "name": "OTIFSolutions/LaravelSocial",
-  "description": "An ACL Menu Package that includes User Roles, Permissions, Db based Menu Items, rights and permission based menu items",
+  "name": "otifsolutions/laravel-social",
+  "description": "Laravel Social allows users to get and create post on different social platforms",
   "type": "library",
   "license": "MIT",
   "authors": [
@@ -23,7 +23,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "OTIFSolutions\\LaravelSocial\\LaravelSocialServiceProvider"
+        "otifsolutions\\LaravelSocial\\LaravelSocialServiceProvider"
       ]
     }
   }
