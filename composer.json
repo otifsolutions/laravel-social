@@ -10,6 +10,7 @@
     }
   ],
   "require": {
+    "abraham/twitteroauth": "^1.0",
     "facebook/graph-sdk": "^5.7",
     "j7mbo/twitter-api-php": "^1.0",
     "mgp25/instagram-php": "^6.0",
