@@ -226,7 +226,7 @@ class SocialManager
 
     public function initPinterest($config){
 
-        $this->instagram = new class($config){
+        $this->pinterest = new class($config){
 
             private  $clientId;
             private  $clientSecret;
