@@ -168,6 +168,7 @@ class SocialManager
 
             private  $username;
             private  $password;
+            private $userId;
 
             public function __construct($config) {
 
@@ -188,8 +189,9 @@ class SocialManager
             function getSelfUser(){
                 $ig = new \InstagramAPI\Instagram();
                 $ig->login($this->username, $this->password);
+                $this->userId = $ig->people->getUserIdForName($this->username);
                 
-                return $ig->people->getUserIdForName($this->username);
+                return $ig->people->getInfoById($this->userId);
                 
             }
 
