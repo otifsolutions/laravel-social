@@ -4,6 +4,7 @@ namespace OTIFSolutions\LaravelSocial;
 
 
 use DirkGroenen\Pinterest\Pinterest;
+use TwitterAPIExchange;
 use PhpParser\Builder\Class_;
 
 class SocialManager
