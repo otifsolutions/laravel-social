@@ -107,23 +107,27 @@ class SocialManager
                 $this->consumerSecret = $config['consumer_secret'];
             }
 
-            function getAllPosts($twitter) {
+            function getAllPosts($details,$limit=20) {
 
-                if ($twitter) {
+                if ($details) {
 
 
                     /** Set access tokens here - see: https://dev.twitter.com/apps/ **/
                     $settings = array(
-                        'oauth_access_token' => $twitter['auth_token'],
-                        'oauth_access_token_secret' => $twitter['secret_token'],
+                        'oauth_access_token' => $details['auth_token'],
+                        'oauth_access_token_secret' => $details['secret_token'],
                         'consumer_key' => $this->consumerKey,
                         'consumer_secret' => $this->consumerSecret
                     );
+                    
+                    $url = "https://api.twitter.com/1.1/statuses/user_timeline.json";
+                    $getfield = '?screen_name=' . $details['account_email'] . '&count='.$limit;
+                    $twitter = new TwitterAPIExchange($settings);
+                    $posts = $twitter->setGetfield($getfield)
+                        ->buildOauth($url, "GET")
+                        ->performRequest();
 
-                    $twitter = new Twitter($settings['consumer_key'], $settings['consumer_secret'], $settings['oauth_access_token'], $settings['oauth_access_token_secret']);
-
-
-                    $posts = $twitter->request('statuses/home_timeline', 'GET');
+                    $posts = json_decode($posts);
 
                 } else
                     $posts = array();
