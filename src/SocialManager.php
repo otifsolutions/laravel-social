@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: hp
- * Date: 21-Jun-19
- * Time: 11:10 AM
- */
 
 namespace OTIFSolutions\LaravelSocial;
 
@@ -177,7 +171,7 @@ class SocialManager
 
             public function __construct($config) {
 
-                $this->username = $config['user_name'];
+                $this->username = $config['username'];
                 $this->password = $config['password'];
             }
 
@@ -189,6 +183,14 @@ class SocialManager
 
                 return $ig->timeline->getSelfUserFeed();
 
+            }
+            
+            function getSelfUser(){
+                $ig = new \InstagramAPI\Instagram();
+                $ig->login($this->username, $this->password);
+                
+                return $ig->people->getUserIdForName($this->username);
+                
             }
 
             function createPost($file, $metaData, $isVideo) {
