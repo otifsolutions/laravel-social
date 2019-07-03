@@ -191,7 +191,7 @@ class SocialManager
                 $ig->login($this->username, $this->password);
                 $this->userId = $ig->people->getUserIdForName($this->username);
                 
-                return $ig->people->getInfoById($this->userId);
+                return $ig->people->getInfoById($this->userId)->getUser();
                 
             }
 
