@@ -7,7 +7,20 @@ class LaravelSocialServiceProvider extends ServiceProvider {
 
     public function boot()
     {
-
+        $this->loadRoutesFrom(__DIR__.'/routes/web.php');
+        $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
+        $this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-social');
+        
+        //$this->app['router']->aliasMiddleware('role', Http\Middleware\UserRole::class);
+        
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Commands\AutoUpdatePosts::class,
+                Commands\DBCleanUp::class,
+                Commands\DBCleanUp::class,
+                Commands\InstaNewPosts::class,
+            ]);
+        }
     }
 
     public function register()
