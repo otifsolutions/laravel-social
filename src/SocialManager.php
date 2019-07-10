@@ -241,7 +241,7 @@ class SocialManager
             function getSelfUser($accessToken){
                 $pinterest = new Pinterest($this->clientId, $this->clientSecret);
                 $pinterest->auth->setOAuthToken($accessToken);
-                return $pinterest->users->me(['fields' => 'username,first_name,last_name,bio,created_at,counts,image,url,account_type']);
+                return $pinterest->users->me(['fields' => 'username,first_name,last_name,bio,created_at,counts,image[large],url,account_type']);
             }
 
             function getAllPins($accessToken) {
