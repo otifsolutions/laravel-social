@@ -94,11 +94,7 @@ class SocialManager
     }
 
     public function initTwitter($config){
-
-
         $this->twitter = new class($config){
-
-
             private  $consumerKey;
             private  $consumerSecret;
 
@@ -163,7 +159,7 @@ class SocialManager
                 }
 
             }
-
+            
         };
     }
 
@@ -241,12 +237,18 @@ class SocialManager
                 $this->clientId = $config['client_id'];
                 $this->clientSecret = $config['client_secret'];
             }
+            
+            function getSelfUser($accessToken){
+                $pinterest = new Pinterest($this->clientId, $this->clientSecret);
+                $pinterest->auth->setOAuthToken($accessToken);
+                return $pinterest->users->me(['fields' => 'username,first_name,last_name,bio,created_at,counts,image,url,account_type']);
+            }
 
             function getAllPins($accessToken) {
 
                 $pinterest = new Pinterest($this->clientId, $this->clientSecret);
                 $pinterest->auth->setOAuthToken($accessToken);
-                return $pinterest->users->getMePins();
+                return $pinterest->users->getMePins(['fields' => 'link,url,creator,board,created_at,note,color,counts,media,attribution,image,metadata,original_link']);
 
             }
 
