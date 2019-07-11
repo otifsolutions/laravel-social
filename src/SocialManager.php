@@ -133,31 +133,32 @@ class SocialManager
 
             }
 
-            function createPost($accessToken, $accessSecret, $message, $tweetImage) {
-
-                $twitter = new Twitter($this->consumerKey, $this->consumerSecret, $accessToken, $accessSecret);
-
-                try {
-                    if ($tweetImage != '')
-                        $tweet = $twitter->send($message, $tweetImage);
-                    else
-                        $tweet = $twitter->send($message);
-
-                    if ($tweet) {
-                        return array(
-                            'status' => 1,
-                            'message' => "Successfully Posted"
-                        );
-                    }
-
-                } catch (\Exception $e) {
-
-                    return array(
-                        'status' => 0,
-                        'error_message' => $e->getMessage()
+            function createPost($accessToken, $accessSecret, $message, $imagePath = null) {
+                $settings = array(
+                        'oauth_access_token' => $accessToken,
+                        'oauth_access_token_secret' => $accessSecret,
+                        'consumer_key' => $this->consumerKey,
+                        'consumer_secret' => $this->consumerSecret
                     );
+                $url = "https://api.twitter.com/1.1/statuses/update.json";
+                $postFields = [
+                    'status' => $message, 
+                    'skip_status' => '1'
+                ];
+                $twitter = new TwitterAPIExchange($settings);
+                if ($imagePath !== null){
+                    $response = $twitter->setPostfields([
+                            'media_data' => base64_encode(file_get_contents($imagePath))
+                        ])
+                        ->buildOauth('https://upload.twitter.com/1.1/media/upload.json', "POST")
+                        ->performRequest();
+                    $response = json_decode($response);
+                    $postFields['media_ids'] = $response->media_id_string;
                 }
-
+                $response = $twitter->setPostfields($postFields)
+                    ->buildOauth($url, "POST")
+                    ->performRequest();
+                return json_decode($response);
             }
             
         };
@@ -197,20 +198,13 @@ class SocialManager
             }
 
             function createPost($file, $metaData, $isVideo) {
-
-
                 try {
                     $ig = new \InstagramAPI\Instagram();
-
                     $ig->login($this->username, $this->password);
-
                     if ($isVideo) {
-
                         $video = new \InstagramAPI\Media\Video\InstagramVideo($file);
                         $ig->timeline->uploadVideo($video->getFile(), $metaData);
-
                     } else {
-
                         $photo = new \InstagramAPI\Media\Photo\InstagramPhoto($file);
                         return $ig->timeline->uploadPhoto($photo->getFile(), $metaData);
                     }
@@ -243,21 +237,21 @@ class SocialManager
                 $pinterest->auth->setOAuthToken($accessToken);
                 return $pinterest->users->me(['fields' => 'username,first_name,last_name,bio,created_at,counts,image[large],url,account_type']);
             }
-
+            function getAllBoards($accessToken){
+                $pinterest = new Pinterest($this->clientId, $this->clientSecret);
+                $pinterest->auth->setOAuthToken($accessToken);
+                return $pinterest->users->getMeBoards(['fields' => 'name,url,description,creator,created_at,counts,image[large]']);
+            }
             function getAllPins($accessToken) {
-
                 $pinterest = new Pinterest($this->clientId, $this->clientSecret);
                 $pinterest->auth->setOAuthToken($accessToken);
                 return $pinterest->users->getMePins(['fields' => 'link,url,creator,board,created_at,note,color,counts,media,attribution,image,metadata,original_link']);
-
             }
 
             function createPin($accessToken, $data) {
-
                 $pinterest = new Pinterest($this->clientId, $this->clientSecret);
                 $pinterest->auth->setOAuthToken($accessToken);
                 return $pinterest->pins->create($data);
-
             }
 
         };
