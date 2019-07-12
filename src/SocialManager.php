@@ -41,8 +41,7 @@ class SocialManager
                 $this->appSecret = $config['app_secret'];
 
             }
-
-            function getAllPosts($authToken, $limit = 25) {
+            function getAllPosts($authToken,$pageId, $limit = 25) {
 
                 if ($authToken) {
 
@@ -52,7 +51,7 @@ class SocialManager
                     ]);
 
                     try {
-                        $response = $fb->get('/me/feed?fields=id,message,description,name,link,created_time,attachments{media}&limit='.$limit, $authToken);
+                        $response = $fb->get('/'.$pageId.'/feed?fields=id,message,description,name,link,created_time,attachments{media}&limit='.$limit, $authToken);
 
                     } catch (\Facebook\Exceptions\FacebookResponseException $e) {
                         echo 'Graph returned an error: ' . $e->getMessage();
@@ -71,7 +70,35 @@ class SocialManager
                 }
 
             }
+            function getAllPages($authToken) {
 
+                if ($authToken) {
+
+                    $fb = new \Facebook\Facebook([
+                        'app_id' => $this->appId,
+                        'app_secret' => $this->appSecret
+                    ]);
+
+                    try {
+                        $response = $fb->get('/me/accounts', $authToken);
+
+                    } catch (\Facebook\Exceptions\FacebookResponseException $e) {
+                        echo 'Graph returned an error: ' . $e->getMessage();
+                        exit;
+                    } catch (\Facebook\Exceptions\FacebookSDKException $e) {
+                        echo 'Facebook SDK returned an error: ' . $e->getMessage();
+                        exit;
+                    }
+                    $posts = $response->getDecodedBody();
+                    return $posts['data'];
+
+                } else {
+
+                    $posts = array();
+                    return $posts;
+                }
+
+            }
             function createPost($pageId, $data, $accessToken) {
 
                 try {
@@ -89,7 +116,6 @@ class SocialManager
                 }
 
             }
-
         };
     }
 
