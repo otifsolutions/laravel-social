@@ -17,7 +17,7 @@ class LaravelSocialServiceProvider extends ServiceProvider {
             $this->commands([
                 Commands\AutoUpdatePosts::class,
                 Commands\DBCleanUp::class,
-                Commands\DBCleanUp::class,
+                Commands\InstaGetPosts::class,
                 Commands\InstaNewPosts::class,
             ]);
         }
