@@ -18,7 +18,7 @@ class AutoUpdatePosts extends Command
      *
      * @var string
      */
-    protected $signature = 'insta:update';
+    protected $signature = 'social:insta:update';
 
     /**
      * The console command description.
