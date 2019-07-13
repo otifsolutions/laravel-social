@@ -11,7 +11,7 @@ use \InstagramAPI\Instagram;
 use OTIFSolutions\LaravelSocial\Models\InstaUser;
 use OTIFSolutions\LaravelSocial\Models\InstaUserPost;
 
-class AutoUpdatePosts extends Command
+class InstaUpdatePosts extends Command
 {
     /**
      * The name and signature of the console command.

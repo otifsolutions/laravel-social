@@ -7,7 +7,8 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 use OTIFSolutions\LaravelSocial\Models\InstaUser;
-use OTIFSolutions\LaravelSocial\Models\InstaUserPost;
+use OTIFSolutions\LaravelSocial\Models\TwitterUser;
+use OTIFSolutions\LaravelSocial\Models\FacebookUser;
 
 class DBCleanUp extends Command
 {
@@ -18,7 +19,7 @@ class DBCleanUp extends Command
      *
      * @var string
      */
-    protected $signature = 'social:insta:cleanup';
+    protected $signature = 'social:cleanup';
 
     /**
      * The console command description.
@@ -48,20 +49,29 @@ class DBCleanUp extends Command
         $this->logHandler->writeln("****************************");
         $this->logHandler->writeln("Started Cleanup of DB.");
         $this->logHandler->writeln("Fetching Users from DB");
-        $date = new \DateTime('-'.env('INSTAGRAM_USER_KEEP_DAYS').' days');
-        $users = InstaUser::where('last_viewed_at','<=',$date->format('Y-m-d'))->get();
+        $date = new \DateTime('-'.env('SOCIAL_USER_KEEP_DAYS').' days');
+        
+        $this->deleteUsers(InstaUser::where('last_viewed_at','<=',$date->format('Y-m-d'))->get());
+        $this->cleanPostsForUsers(InstaUser::all());
+        $this->deleteUsers(TwitterUser::where('last_viewed_at','<=',$date->format('Y-m-d'))->get());
+        $this->cleanPostsForUsers(TwitterUser::all());
+        $this->deleteUsers(FacebookUser::where('last_viewed_at','<=',$date->format('Y-m-d'))->get());
+        $this->cleanPostsForUsers(FacebookUser::all());
+        
+    }
+    
+    private function deleteUsers($users){
         foreach($users as $user)
         {
-            $ids = InstaUserPost::where('insta_user_id','=',$user['id'])->pluck('id');
-            InstaUserPost::whereIn('id', $ids)->delete();
+            $user->posts()->delete();
             $user->delete();
         }
-        $users = InstaUser::all();
+    }
+    private function cleanPostsForUsers($users){
         foreach($users as $user){
             switch($user['status']){
                 case 'ACTIVE':
-                    $ids = InstaUserPost::where('insta_user_id','=',$user['id'])->orderBy('engagement',' DESC')->skip(env('INSTAGRAM_USER_KEEP_POSTS'))->take((env('INSTAGRAM_FETCH_LIMIT') + 100))->pluck('id');
-                    InstaUserPost::whereIn('id', $ids)->delete();
+                    $user->posts()->orderBy('engagement','DESC')->skip(env('SOCIAL_USER_KEEP_POSTS'))->take((env('SOCIAL_FETCH_LIMIT') + 100))->delete();
                     break;
                 case 'PRIVATE':
                 case 'NOT FOUND':

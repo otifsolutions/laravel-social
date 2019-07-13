@@ -12,10 +12,10 @@ class LaravelSocialServiceProvider extends ServiceProvider {
         $this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-social');
         
         //$this->app['router']->aliasMiddleware('role', Http\Middleware\UserRole::class);
-        if ($this->app->runningInConsole()) {        
+        if ($this->app->runningInConsole()) {
             $this->commands([
-                Commands\AutoUpdatePosts::class,
                 Commands\DBCleanUp::class,
+                Commands\InstaUpdatePosts::class,
                 Commands\InstaGetPosts::class,
                 Commands\InstaNewPosts::class,
             ]);
