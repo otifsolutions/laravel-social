@@ -13,8 +13,9 @@ class SocialManager
     public $twitter = null;
     public $instagram = null;
     public $pinterest = null;
+    public $linkedIn = null;
 
-    public function __construct($facebookConfig = null, $twitterConfig = null, $instagramConfig = null, $pinterestConfig = null) {
+    public function __construct($facebookConfig = null, $twitterConfig = null, $instagramConfig = null, $pinterestConfig = null, $linkedInConfig = null) {
 
         if ($facebookConfig)
              $this->initFacebook($facebookConfig);
@@ -22,9 +23,11 @@ class SocialManager
             $this->initTwitter($twitterConfig);
         if ($instagramConfig)
             $this->initInstagram($instagramConfig);
-
         if ($pinterestConfig) {
             $this->initPinterest($pinterestConfig);
+        }
+        if ($linkedInConfig){
+            $this->initLinkedIn($linkedInConfig);
         }
     }
 
@@ -365,5 +368,56 @@ class SocialManager
 
         };
     }
+    
+    public function initLinkedIn($config){
 
+        $this->linkedIn = new class($config){
+
+            private  $clientId;
+            private  $clientSecret;
+
+            public function __construct($config = null) {
+                if ($config){
+                    $this->clientId = $config['client_id'];
+                    $this->clientSecret = $config['client_secret'];
+                }
+            }
+            
+            function getSelfUser($accessToken){
+                $token = new \League\OAuth2\Client\Token\AccessToken(['access_token' => $accessToken]);
+                $linkedIn = new \League\OAuth2\Client\Provider\LinkedIn();
+                return $linkedIn->withFields(['id', 'firstName', 'lastName', 'maidenName','headline', 'vanityName', 'profilePicture'])->getResourceOwner($token);
+            }
+            function createPost($accessToken,$userId,$data){
+                if (!isset($accessToken) || !isset($data)) return null;
+                $client = new \GuzzleHttp\Client();
+                $response = $client->post('https://api.linkedin.com/v2/shares',  [
+                    'headers' => [
+                        'Authorization' => 'Bearer '.$accessToken,
+                        'Content-Type' => 'application/json'
+                        ],
+                    'json' => [
+                        'content' => [
+                            'contentEntities' => [
+                                    [
+                                        'entityLocation' => $data['image_url'],
+                                        'thumbnails' => [
+                                                [
+                                                    'resolvedUrl' => $data['image_url']
+                                                ]
+                                            ]
+                                    ]
+                                ],
+                            'title' => $data['title']
+                        ],
+                        'owner' => 'urn:li:person:'.$userId,
+                        'subject' => $data['title'],
+                        'text' => [ 'text' => $data['content'] ]
+                    ]
+                ]);
+                return $response;
+            }
+            
+        };
+    }
 }
