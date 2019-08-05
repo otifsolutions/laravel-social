@@ -310,22 +310,15 @@ class SocialManager
             }
 
             function createPost($file, $metaData, $isVideo) {
-                try {
-                    $ig = new \InstagramAPI\Instagram();
-                    $ig->login($this->username, $this->password);
-                    if ($isVideo) {
-                        $video = new \InstagramAPI\Media\Video\InstagramVideo($file);
-                        $ig->timeline->uploadVideo($video->getFile(), $metaData);
-                    } else {
-                        $photo = new \InstagramAPI\Media\Photo\InstagramPhoto($file);
-                        return $ig->timeline->uploadPhoto($photo->getFile(), $metaData);
-                    }
-
-                } catch (\Exception $e) {
-                    echo 'Something went wrong: '.$e->getMessage()."\n";
+                $ig = new \InstagramAPI\Instagram();
+                $ig->login($this->username, $this->password);
+                if ($isVideo) {
+                    $video = new \InstagramAPI\Media\Video\InstagramVideo($file);
+                    $ig->timeline->uploadVideo($video->getFile(), $metaData);
+                } else {
+                    $photo = new \InstagramAPI\Media\Photo\InstagramPhoto($file);
+                    return $ig->timeline->uploadPhoto($photo->getFile(), $metaData);
                 }
-
-
             }
 
         };
