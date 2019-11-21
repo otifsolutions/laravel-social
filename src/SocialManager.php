@@ -384,7 +384,35 @@ class SocialManager
             function createPost($accessToken,$userId,$data){
                 if (!isset($accessToken) || !isset($data)) return null;
                 $client = new \GuzzleHttp\Client();
-                $response = $client->post('https://api.linkedin.com/v2/shares',  [
+
+                $postData['headers'] = [
+                    'Authorization' => 'Bearer '.$accessToken,
+                    'Content-Type' => 'application/json'
+                ];
+
+                $postData['json'] = [
+
+                    'owner' => 'urn:li:person:'.$userId,
+                    'subject' => $data['title'],
+                    'text' => [ 'text' => $data['content'] ]
+                ];
+
+                $postData['json']['content'] = [
+                    'title' => $data['title']
+                ];
+
+                if (!empty($data['image_url']) && !is_null($data['image_url'])) {
+                    $postData['json']['content']['contentEntities'] = [
+                        'entityLocation' => $data['image_url'],
+                        'thumbnails' => [
+                            [
+                                'resolvedUrl' => $data['image_url']
+                            ]
+                        ]
+                    ];
+                }
+
+                /*$response = $client->post('https://api.linkedin.com/v2/shares',  [
                     'headers' => [
                         'Authorization' => 'Bearer '.$accessToken,
                         'Content-Type' => 'application/json'
@@ -400,14 +428,17 @@ class SocialManager
                                                 ]
                                             ]
                                     ]
-                                ],*/
+                                ],
                             'title' => $data['title']
                         ],
                         'owner' => 'urn:li:person:'.$userId,
                         'subject' => $data['title'],
                         'text' => [ 'text' => $data['content'] ]
                     ]
-                ]);
+                ]);*/
+
+                $response = $client->post('https://api.linkedin.com/v2/shares',  $postData);
+
                 return $response;
             }
             
