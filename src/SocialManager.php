@@ -384,6 +384,32 @@ class SocialManager
             function createPost($accessToken,$userId,$data){
                 if (!isset($accessToken) || !isset($data)) return null;
                 $client = new \GuzzleHttp\Client();
+
+                /*$postData['headers'] = [
+                    'Authorization' => 'Bearer '.$accessToken,
+                    'Content-Type' => 'application/json'
+                ];
+
+                $postData['json'] = [
+                    'content' => [
+                        'contentEntities' => [
+                            [
+                                'entityLocation' => $data['image_url'],
+                                'thumbnails' => [
+                                    [
+                                        'resolvedUrl' => $data['image_url']
+                                    ]
+                                ]
+                            ]
+                        ],
+                        'title' => $data['title']
+                    ],
+                    'owner' => 'urn:li:person:'.$userId,
+                    'subject' => $data['title'],
+                    'text' => [ 'text' => $data['content'] ]
+                ];*/
+
+
                 $response = $client->post('https://api.linkedin.com/v2/shares',  [
                     'headers' => [
                         'Authorization' => 'Bearer '.$accessToken,
@@ -394,9 +420,11 @@ class SocialManager
                             'contentEntities' => [
                                     [
 //                                        'entityLocation' => $data['image_url'],
+                                        'entityLocation' =>'',
                                         'thumbnails' => [
                                                 [
-                                                    'resolvedUrl' => $data['image_url']
+//                                                    'resolvedUrl' => $data['image_url']
+                                                    'resolvedUrl' => ''
                                                 ]
                                             ]
                                     ]
