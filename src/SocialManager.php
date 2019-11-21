@@ -390,7 +390,7 @@ class SocialManager
                         'Content-Type' => 'application/json'
                         ],
                     'json' => [
-                        /*'content' => [
+                        'content' => [
                             'contentEntities' => [
                                     [
 //                                        'entityLocation' => $data['image_url'],
@@ -402,7 +402,7 @@ class SocialManager
                                     ]
                                 ],
                             'title' => $data['title']
-                        ],*/
+                        ],
                         'owner' => 'urn:li:person:'.$userId,
                         'subject' => $data['title'],
                         'text' => [ 'text' => $data['content'] ]
