@@ -391,7 +391,7 @@ class SocialManager
                         ],
                     'json' => [
                         'content' => [
-                            'contentEntities' => [
+                            /*'contentEntities' => [
                                     [
 //                                        'entityLocation' => $data['image_url'],
                                         'thumbnails' => [
@@ -400,7 +400,7 @@ class SocialManager
                                                 ]
                                             ]
                                     ]
-                                ],
+                                ],*/
                             'title' => $data['title']
                         ],
                         'owner' => 'urn:li:person:'.$userId,
