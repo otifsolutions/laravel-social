@@ -13,9 +13,7 @@
     "abraham/twitteroauth": "^1.0",
     "facebook/graph-sdk": "^5.7",
     "j7mbo/twitter-api-php": "^1.0",
-    "mgp25/instagram-php": "^6.0",
-    "league/oauth2-linkedin": "^5.1",
-    "dirkgroenen/pinterest-api-php": "^0.2.12"
+    "league/oauth2-linkedin": "^5.1"
   },
   "autoload": {
     "psr-4": {
