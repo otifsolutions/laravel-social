@@ -119,6 +119,27 @@ class SocialManager
 
             }
 
+            function createImagePost($pageId, $data, $accessToken)
+            {
+                try {
+                    $fb = new \Facebook\Facebook([
+                        'app_id' => $this->appId,
+                        'app_secret' => $this->appSecret
+                    ]);
+                    $upload = [
+                        'message' => $data['message'],
+                        'source' => $fb->fileToUpload($data['path']),
+                    ];
+                    return $fb->post($pageId . '/photos', $upload, $accessToken);
+
+                } catch (\Exception $e) {
+                    return array(
+                        'status' => 0,
+                        'error_message' => 'ERROR'
+                    );
+                }
+            }
+
             function getPostsForUsername($authToken, $username, $limit = 25)
             {
                 if ($authToken) {
