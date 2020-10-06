@@ -17,7 +17,6 @@ class SocialManager
 
     public function __construct($facebookConfig = null, $twitterConfig = null, $instagramConfig = null, $pinterestConfig = null, $linkedInConfig = null)
     {
-
         if ($facebookConfig) {
             $this->initFacebook($facebookConfig);
         }
@@ -26,6 +25,9 @@ class SocialManager
         }
         if ($linkedInConfig) {
             $this->initLinkedIn($linkedInConfig);
+        }
+        if ($instagramConfig) {
+            $this->initInstagram($instagramConfig);
         }
     }
 
@@ -49,10 +51,8 @@ class SocialManager
                         'app_id' => $this->appId,
                         'app_secret' => $this->appSecret
                     ]);
-
                     try {
                         $response = $fb->get('/' . $pageId . '/feed?fields=id,message,description,name,link,created_time,attachments{media}&limit=' . $limit, $authToken);
-
                     } catch (\Facebook\Exceptions\FacebookResponseException $e) {
                         echo 'Graph returned an error: ' . $e->getMessage();
                         exit;
@@ -62,27 +62,21 @@ class SocialManager
                     }
                     $posts = $response->getDecodedBody();
                     return $posts['data'];
-
                 } else {
-
                     $posts = array();
                     return $posts;
                 }
-
             }
 
             function getAllPages($authToken)
             {
                 if ($authToken) {
-
                     $fb = new \Facebook\Facebook([
                         'app_id' => $this->appId,
                         'app_secret' => $this->appSecret
                     ]);
-
                     try {
                         $response = $fb->get('/me/accounts', $authToken);
-
                     } catch (\Facebook\Exceptions\FacebookResponseException $e) {
                         echo 'Graph returned an error: ' . $e->getMessage();
                         exit;
@@ -92,13 +86,10 @@ class SocialManager
                     }
                     $posts = $response->getDecodedBody();
                     return $posts['data'];
-
                 } else {
-
                     $posts = array();
                     return $posts;
                 }
-
             }
 
             function createPost($pageId, $data, $accessToken)
@@ -109,14 +100,12 @@ class SocialManager
                         'app_secret' => $this->appSecret
                     ]);
                     return $fb->post($pageId . '/feed', $data, $accessToken);
-
                 } catch (\Exception $e) {
                     return array(
                         'status' => 0,
                         'error_message' => 'ERROR'
                     );
                 }
-
             }
 
             function createImagePost($pageId, $data, $accessToken)
@@ -131,7 +120,6 @@ class SocialManager
                         'source' => $fb->fileToUpload($data['path']),
                     ];
                     return $fb->post($pageId . '/photos', $upload, $accessToken);
-
                 } catch (\Exception $e) {
                     return array(
                         'status' => 0,
@@ -171,7 +159,6 @@ class SocialManager
                         'app_id' => $this->appId,
                         'app_secret' => $this->appSecret
                     ]);
-
                     try {
                         $response = $fb->get('/' . $username . '?fields=about,fan_count,new_like_count,rating_count,talking_about_count,global_brand_page_name,name,name_with_location_descriptor', $authToken);
                     } catch (\Facebook\Exceptions\FacebookResponseException $e) {
@@ -182,7 +169,6 @@ class SocialManager
                         exit;
                     }
                     return $response->getDecodedBody();
-
                 } else {
                     $posts = array();
                     return $posts;
@@ -206,10 +192,7 @@ class SocialManager
 
             function getAllPosts($details, $limit = 20)
             {
-
                 if ($details) {
-
-
                     /** Set access tokens here - see: https://dev.twitter.com/apps/ **/
                     $settings = array(
                         'oauth_access_token' => $details['auth_token'],
@@ -217,21 +200,16 @@ class SocialManager
                         'consumer_key' => $this->consumerKey,
                         'consumer_secret' => $this->consumerSecret
                     );
-
                     $url = "https://api.twitter.com/1.1/statuses/user_timeline.json";
                     $getfield = '?screen_name=' . $details['account_email'] . '&count=' . $limit;
                     $twitter = new TwitterAPIExchange($settings);
                     $posts = $twitter->setGetfield($getfield)
                         ->buildOauth($url, "GET")
                         ->performRequest();
-
                     $posts = json_decode($posts);
-
                 } else
                     $posts = array();
-
-                return $posts;
-
+                    return $posts;
             }
 
             function createPost($accessToken, $accessSecret, $message, $imagePath = null)
@@ -272,7 +250,6 @@ class SocialManager
                         'consumer_key' => $this->consumerKey,
                         'consumer_secret' => $this->consumerSecret
                     );
-
                     $url = "https://api.twitter.com/1.1/users/show.json";
                     $getfield = '?screen_name=' . $details['username'];
                     $twitter = new TwitterAPIExchange($settings);
@@ -300,121 +277,16 @@ class SocialManager
                     $response = $twitter->setGetfield($getfield)
                         ->buildOauth($url, "GET")
                         ->performRequest();
-
                     return json_decode($response);
                 } else return null;
             }
-
         };
     }
 
-//public function initInstagram($config)
-//{
-//
-//    $this->instagram = new class($config)
-//    {
-//
-//        private $username;
-//        private $password;
-//        private $userId;
-//
-//        public function __construct($config)
-//        {
-//
-//            $this->username = $config['username'];
-//            $this->password = $config['password'];
-//        }
-//
-//        function getAllPosts()
-//        {
-//
-//            $ig = new \InstagramAPI\Instagram();
-//
-//            $ig->login($this->username, $this->password);
-//
-//            return $ig->timeline->getSelfUserFeed();
-//
-//        }
-//
-//        function getSelfUser()
-//        {
-//            $ig = new \InstagramAPI\Instagram();
-//            $ig->login($this->username, $this->password);
-//            $this->userId = $ig->people->getUserIdForName($this->username);
-//
-//            return $ig->people->getInfoById($this->userId)->getUser();
-//
-//        }
-//
-//        function createPost($file, $metaData, $isVideo)
-//        {
-//            $ig = new \InstagramAPI\Instagram();
-//            $ig->login($this->username, $this->password);
-//            if ($isVideo) {
-//                $video = new \InstagramAPI\Media\Video\InstagramVideo($file);
-//                $ig->timeline->uploadVideo($video->getFile(), $metaData);
-//            } else {
-//                $photo = new \InstagramAPI\Media\Photo\InstagramPhoto($file);
-//                return $ig->timeline->uploadPhoto($photo->getFile(), $metaData);
-//            }
-//        }
-//
-//    };
-//}
-//
-//public function initPinterest($config)
-//{
-//
-//    $this->pinterest = new class($config)
-//    {
-//
-//        private $clientId;
-//        private $clientSecret;
-//
-//        public function __construct($config)
-//        {
-//
-//            $this->clientId = $config['client_id'];
-//            $this->clientSecret = $config['client_secret'];
-//        }
-//
-//        function getSelfUser($accessToken)
-//        {
-//            $pinterest = new Pinterest($this->clientId, $this->clientSecret);
-//            $pinterest->auth->setOAuthToken($accessToken);
-//            return $pinterest->users->me(['fields' => 'username,first_name,last_name,bio,created_at,counts,image[large],url,account_type']);
-//        }
-//
-//        function getAllBoards($accessToken)
-//        {
-//            $pinterest = new Pinterest($this->clientId, $this->clientSecret);
-//            $pinterest->auth->setOAuthToken($accessToken);
-//            return $pinterest->users->getMeBoards(['fields' => 'name,url,description,creator,created_at,counts,image[large]']);
-//        }
-//
-//        function getAllPins($accessToken)
-//        {
-//            $pinterest = new Pinterest($this->clientId, $this->clientSecret);
-//            $pinterest->auth->setOAuthToken($accessToken);
-//            return $pinterest->users->getMePins(['fields' => 'link,url,creator,board,created_at,note,color,counts,media,attribution,image,metadata,original_link']);
-//        }
-//
-//        function createPin($accessToken, $data)
-//        {
-//            $pinterest = new Pinterest($this->clientId, $this->clientSecret);
-//            $pinterest->auth->setOAuthToken($accessToken);
-//            return $pinterest->pins->create($data);
-//        }
-//
-//    };
-//}
-
     public function initLinkedIn($config)
     {
-
         $this->linkedIn = new class($config)
         {
-
             private $clientId;
             private $clientSecret;
 
@@ -433,27 +305,25 @@ class SocialManager
                 return $linkedIn->withFields(['id', 'firstName', 'lastName', 'maidenName', 'headline', 'vanityName', 'profilePicture'])->getResourceOwner($token);
             }
 
-            function createPost($accessToken, $userId, $data)
+            function createPost($accessToken, $userId, $data, $mode='personal')
             {
                 if (!isset($accessToken) || !isset($data)) return null;
+                $postMode = 'urn:li:person:';
+                if($mode=='company')
+                    $postMode = 'urn:li:organization:';
                 $client = new \GuzzleHttp\Client();
-
                 $postData['headers'] = [
                     'Authorization' => 'Bearer ' . $accessToken,
                     'Content-Type' => 'application/json'
                 ];
-
                 $postData['json'] = [
-
-                    'owner' => 'urn:li:person:' . $userId,
+                    'owner' => $postMode . $userId,
                     'subject' => $data['title'],
                     'text' => ['text' => $data['content']]
                 ];
-
                 $postData['json']['content'] = [
                     'title' => $data['title']
                 ];
-
                 if (!empty($data['image_url']) && !is_null($data['image_url'])) {
                     $postData['json']['content']['contentEntities'] = [
                         [
@@ -464,40 +334,58 @@ class SocialManager
                                 ]
                             ]
                         ]
-
                     ];
                 }
-
-                /*$response = $client->post('https://api.linkedin.com/v2/shares',  [
-                    'headers' => [
-                        'Authorization' => 'Bearer '.$accessToken,
-                        'Content-Type' => 'application/json'
-                        ],
-                    'json' => [
-                        'content' => [
-                            /*'contentEntities' => [
-                                    [
-    //                                        'entityLocation' => $data['image_url'],
-                                        'thumbnails' => [
-                                                [
-                                                    'resolvedUrl' => $data['image_url']
-                                                ]
-                                            ]
-                                    ]
-                                ],
-                            'title' => $data['title']
-                        ],
-                        'owner' => 'urn:li:person:'.$userId,
-                        'subject' => $data['title'],
-                        'text' => [ 'text' => $data['content'] ]
-                    ]
-                ]);*/
-
                 $response = $client->post('https://api.linkedin.com/v2/shares', $postData);
-
                 return $response;
             }
 
+            function getCompanies($accessToken){
+                if (!isset($accessToken)) return null;
+                $client = new \GuzzleHttp\Client();
+
+                $response = $client->get('https://api.linkedin.com/v2/organizationalEntityAcls?q=roleAssignee&role=ADMINISTRATOR&projection=(elements*(organizationalTarget~(localizedName,vanityName,logoV2)))',[
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $accessToken,
+                        'Content-Type' => 'application/json'
+                    ]
+                ]);
+                return $response;
+            }
+        };
+    }
+    public function initInstagram($config)
+    {
+        $this->instagram = new class($config) {
+
+            private $clientId;
+            private $clientSecret;
+
+            public function __construct($config = null)
+            {
+                if ($config) {
+                    $this->clientId = $config['client_id'];
+                    $this->clientSecret = $config['client_secret'];
+                }
+            }
+
+            function getInstagramMedia($token)
+            {
+                $curl = curl_init();
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => "https://graph.instagram.com/me/media?fields=id,caption,media_url,media_type,username,permalink,thumbnail_url,timestamp&access_token=" . $token,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "GET",
+                ));
+                $response = curl_exec($curl);
+                curl_close($curl);
+                return json_decode($response, true);
+            }
         };
     }
 }
