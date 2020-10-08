@@ -350,7 +350,7 @@ class SocialManager
                         'Content-Type' => 'application/json'
                     ]
                 ]);
-                return $response;
+                return json_decode($response->getBody());
             }
         };
     }
