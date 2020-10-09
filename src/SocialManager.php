@@ -318,7 +318,12 @@ class SocialManager
                 $postData['json'] = [
                     'owner' => $userId,
                     'subject' => $data['title'],
-                    'text' => ['text' => $data['content']]
+                    'text' => ['text' => $data['content']],
+                    'distribution' => [
+                        'linkedInDistributionTarget' => [
+                            'visibleToGuest' => true
+                            ]
+                        ]
                 ];
                 $postData['json']['content'] = [
                     'title' => $data['title']
