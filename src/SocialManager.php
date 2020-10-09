@@ -308,16 +308,15 @@ class SocialManager
             function createPost($accessToken, $userId, $data, $mode='personal')
             {
                 if (!isset($accessToken) || !isset($data)) return null;
-                $postMode = 'urn:li:person:';
-                if($mode=='company')
-                    $postMode = 'urn:li:organization:';
+                if($mode=='personal')
+                    $userId = 'urn:li:person:'.$userId;
                 $client = new \GuzzleHttp\Client();
                 $postData['headers'] = [
                     'Authorization' => 'Bearer ' . $accessToken,
                     'Content-Type' => 'application/json'
                 ];
                 $postData['json'] = [
-                    'owner' => $postMode . $userId,
+                    'owner' => $userId,
                     'subject' => $data['title'],
                     'text' => ['text' => $data['content']]
                 ];
