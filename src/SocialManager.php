@@ -52,7 +52,7 @@ class SocialManager
                         'app_secret' => $this->appSecret
                     ]);
                     try {
-                        $response = $fb->get('/' . $pageId . '/feed?fields=id,message,description,name,link,created_time,attachments{media}&limit=' . $limit, $authToken);
+                        $response = $fb->get('/' . $pageId . '/feed?fields=id,message,description,name,link,created_time,attachments{media,description},full_picture,permalink_url,likes&limit=' . $limit, $authToken);
                     } catch (\Facebook\Exceptions\FacebookResponseException $e) {
                         echo 'Graph returned an error: ' . $e->getMessage();
                         exit;
